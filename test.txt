@@ -1,0 +1,26 @@
+!pip install opencv-python scikit-image
+
+import cv2
+import numpy as np
+import math
+from skimage.metrics import structural_similarity as ssim
+
+cover_path = "original Img Path"
+stego_path = "Encrypted Img Path"
+
+original = cv2.imread(cover_path, cv2.IMREAD_GRAYSCALE)
+stego = cv2.imread(stego_path, cv2.IMREAD_GRAYSCALE)
+
+if original is None or stego is None:
+    raise ValueError("Check image paths")
+
+if original.shape != stego.shape:
+    raise ValueError("Images must be same size")
+
+mse = np.mean((original.astype(np.float64) - stego.astype(np.float64)) ** 2)
+psnr = float('inf') if mse == 0 else 10 * math.log10((255 ** 2) / mse)
+ssim_value, _ = ssim(original, stego, full=True)
+
+print("MSE :", mse)
+print("PSNR:", psnr)
+print("SSIM:", ssim_value)
